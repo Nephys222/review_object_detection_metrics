@@ -13,7 +13,7 @@ if __name__ == "__main__":
     ui = Main_Dialog()
     ui.show()
 
-    splash = Splash_Dialog()
-    splash.show()
+    # splash = Splash_Dialog()
+    # splash.show()
 
     sys.exit(app.exec_())
