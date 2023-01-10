@@ -226,7 +226,7 @@ def get_pascalvoc_metrics(gt_boxes,
 
 def plot_precision_recall_curve(results,
                                 mAP=None,
-                                showInterpolatedPrecision=False,
+                                showInterpolatedPrecision=True,
                                 savePath=None,
                                 showGraphic=True):
     result = None
@@ -256,7 +256,7 @@ def plot_precision_recall_curve(results,
                         nrec.append(r)
                         nprec.append(max([mpre[int(id)] for id in idxEq]))
                 plt.plot(nrec, nprec, 'or', label='11-point interpolated precision')
-        plt.plot(recall, precision, label=f'{classId}')
+        # plt.plot(recall, precision, label=f'{classId}')
     plt.xlabel('recall')
     plt.ylabel('precision')
     plt.xlim([-0.1, 1.1])
@@ -266,7 +266,7 @@ def plot_precision_recall_curve(results,
         plt.title(f'Precision x Recall curve, mAP={map_str}')
     else:
         plt.title('Precision x Recall curve')
-    plt.legend(shadow=True)
+    # plt.legend(shadow=True)
     plt.grid()
     if savePath is not None:
         plt.savefig(os.path.join(savePath, 'all_classes.png'))

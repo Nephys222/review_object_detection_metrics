@@ -31,6 +31,21 @@ class Results_Dialog(QMainWindow, Results_UI):
                     text += '<br />'
                     text += '<span style=" font-weight:600;">PASCAL METRIC (mAP)</span>'
                     text += tag_value.replace('VALUE', f'mAP: {res}')
+                    
+        if len(pascal_results) != 0:
+            for metric, res in pascal_results.items():
+                if metric == 'per_class':
+                    text += '<br />'
+                    text += '<span style=" font-weight:600;">OTHER PASCAL METRICS</span>'
+                    for c, ap in res.items():
+                        text += tag_value.replace('VALUE', f'{c}: AP: {ap["AP"]}')
+                        text += tag_value.replace('VALUE', f'{c}: interpolated precision: {ap["interpolated precision"]}')
+                        text += tag_value.replace('VALUE', f'{c}: interpolated recall: {ap["interpolated recall"]}')
+                        text += tag_value.replace('VALUE', f'{c}: total positives: {ap["total positives"]}')
+                        text += tag_value.replace('VALUE', f'{c}: total TP: {ap["total TP"]}')
+                        text += tag_value.replace('VALUE', f'{c}: total FP: {ap["total FP"]}')
+                        text += '<br />'
+                                                
         self.txb_results.setText(text)
         self.lbl_folder_output.setText(folder_results)
         self.show()
