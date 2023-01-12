@@ -226,10 +226,13 @@ def get_pascalvoc_metrics(gt_boxes,
 
 def plot_precision_recall_curve(results,
                                 mAP=None,
-                                showInterpolatedPrecision=True,
+                                showInterpolatedPrecision=False,
                                 savePath=None,
                                 showGraphic=True):
     result = None
+    avg_precision = []
+    avg_recall = []
+
     plt.close()
     # Each resut represents a class
     for classId, result in results.items():
@@ -242,6 +245,10 @@ def plot_precision_recall_curve(results,
         mpre = result['interpolated precision']
         mrec = result['interpolated recall']
         method = result['method']
+        
+        avg_precision.append(np.average(precision))
+        avg_recall.append(np.average(recall))
+        
         if showInterpolatedPrecision:
             if method == MethodAveragePrecision.EVERY_POINT_INTERPOLATION:
                 plt.plot(mrec, mpre, '--r', label='Interpolated precision (every point)')
@@ -257,6 +264,9 @@ def plot_precision_recall_curve(results,
                         nprec.append(max([mpre[int(id)] for id in idxEq]))
                 plt.plot(nrec, nprec, 'or', label='11-point interpolated precision')
         # plt.plot(recall, precision, label=f'{classId}')
+    # print(avg_recall, avg_precision)
+    plt.plot(avg_recall, avg_precision, label='Average precision x recall' )
+    
     plt.xlabel('recall')
     plt.ylabel('precision')
     plt.xlim([-0.1, 1.1])
