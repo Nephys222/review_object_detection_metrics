@@ -83,7 +83,7 @@ def get_pascalvoc_metrics(gt_boxes,
                           det_boxes,
                           iou_threshold=0.5,
                           method=MethodAveragePrecision.EVERY_POINT_INTERPOLATION,
-                          generate_table=False):
+                          generate_table=True):
     """Get the metrics used by the VOC Pascal 2012 challenge.
     Args:
         boundingboxes: Object of the class BoundingBoxes representing ground truth and detected
@@ -232,6 +232,7 @@ def plot_precision_recall_curve(results,
     result = None
     avg_precision = []
     avg_recall = []
+    # avg_AP = []
 
     plt.close()
     # Each resut represents a class
@@ -246,8 +247,9 @@ def plot_precision_recall_curve(results,
         mrec = result['interpolated recall']
         method = result['method']
         
-        avg_precision.append(np.average(precision))
-        avg_recall.append(np.average(recall))
+        avg_precision.extend(list(precision))
+        avg_recall.extend(list(recall))
+        # avg_AP.append(average_precision)
         
         if showInterpolatedPrecision:
             if method == MethodAveragePrecision.EVERY_POINT_INTERPOLATION:
@@ -262,7 +264,7 @@ def plot_precision_recall_curve(results,
                         idxEq = np.argwhere(mrec == r)
                         nrec.append(r)
                         nprec.append(max([mpre[int(id)] for id in idxEq]))
-                plt.plot(nrec, nprec, 'or', label='11-point interpolated precision')
+                # plt.plot(nrec, nprec, 'or', label='11-point interpolated precision')
         # plt.plot(recall, precision, label=f'{classId}')
     # print(avg_recall, avg_precision)
     plt.plot(avg_recall, avg_precision, label='Average precision x recall' )
