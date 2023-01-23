@@ -217,7 +217,10 @@ def get_pascalvoc_metrics(gt_boxes,
             'total FP': np.sum(FP),
             'method': method,
             'iou': iou_threshold,
-            'table': table
+            'table': table,
+            'TPN': TP,
+            'FPN': FP,
+            'nposN': npos
         }
     # For mAP, only the classes in the gt set should be considered
     mAP = sum([v['AP'] for k, v in ret.items() if k in gt_classes_only]) / len(gt_classes_only)
@@ -230,9 +233,9 @@ def plot_precision_recall_curve(results,
                                 savePath=None,
                                 showGraphic=True):
     result = None
-    avg_precision = []
-    avg_recall = []
-    # avg_AP = []
+    list_TP = []
+    list_FP = []
+    list_npos = []
 
     plt.close()
     # Each resut represents a class
@@ -247,9 +250,16 @@ def plot_precision_recall_curve(results,
         mrec = result['interpolated recall']
         method = result['method']
         
-        avg_precision.extend(list(precision))
-        avg_recall.extend(list(recall))
-        # avg_AP.append(average_precision)
+        table = result['table']
+        TPN = result['TPN']
+        FPN = result['FPN']
+        nposN = result['nposN']
+        
+        list_TP.extend(TPN)
+        list_FP.extend(FPN)
+        list_npos.append(nposN)
+        
+        # print("Table: ", table, precision, recall)
         
         if showInterpolatedPrecision:
             if method == MethodAveragePrecision.EVERY_POINT_INTERPOLATION:
@@ -266,8 +276,16 @@ def plot_precision_recall_curve(results,
                         nprec.append(max([mpre[int(id)] for id in idxEq]))
                 # plt.plot(nrec, nprec, 'or', label='11-point interpolated precision')
         # plt.plot(recall, precision, label=f'{classId}')
-    # print(avg_recall, avg_precision)
-    plt.plot(avg_recall, avg_precision, label='Average precision x recall' )
+    print("Another: ", list_TP, list_FP, list_npos)
+    
+    # Compute precision, recall for all classes
+    all_acc_FP = np.cumsum(list_FP)
+    all_acc_TP = np.cumsum(list_TP)
+    all_rec = all_acc_TP / sum(list_npos)
+    all_prec = np.divide(all_acc_TP, (all_acc_FP + all_acc_TP))
+    # print("Checkers: ", all_rec, all_prec)
+    
+    plt.plot(all_rec, all_prec, label='Average precision x recall' )
     
     plt.xlabel('recall')
     plt.ylabel('precision')
