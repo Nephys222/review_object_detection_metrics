@@ -276,7 +276,7 @@ def plot_precision_recall_curve(results,
                         nprec.append(max([mpre[int(id)] for id in idxEq]))
                 # plt.plot(nrec, nprec, 'or', label='11-point interpolated precision')
         # plt.plot(recall, precision, label=f'{classId}')
-    print("Another: ", list_TP, list_FP, list_npos)
+    # print("Another: ", list_TP, list_FP, list_npos)
     
     # Compute precision, recall for all classes
     all_acc_FP = np.cumsum(list_FP)
@@ -300,6 +300,10 @@ def plot_precision_recall_curve(results,
     plt.grid()
     if savePath is not None:
         plt.savefig(os.path.join(savePath, 'all_classes.png'))
+
+    if savePath is not None:
+        info = pd.DataFrame(list(zip(all_rec, all_prec)), columns=["Recall", "Precision"])
+        info.to_csv("{0}/all_classes.csv".format(savePath), index = False, sep=',')
     if showGraphic is True:
         plt.show()
         # plt.waitforbuttonpress()
